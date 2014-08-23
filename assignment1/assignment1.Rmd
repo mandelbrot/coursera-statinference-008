@@ -1,0 +1,55 @@
+---
+output: pdf_document
+---
+
+#1. Show where the distribution is centered at and compare it to the theoretical center of the distribution.
+```{r}
+n <- 40
+lambda <- 0.2
+reps <- 1000
+
+Exp <- 0
+for (i in 1:reps) 
+{
+  Exp <- Exp + rexp(n,lambda)
+}
+Exp <- Exp / reps
+
+summary(Exp)
+
+#theoretical mean = 1/lambda = 5
+#simulated mean:
+mean <- mean(Exp)
+mean
+```
+
+#2. Show how variable it is and compare it to the theoretical variance of the distribution.
+```{r}
+#theoretical variance = lambda^-2 = 0.04
+#simulated variance:
+1/(mean(Exp))^2
+```
+
+#3. Show that the distribution is approximately normal.
+```{r}
+h <- hist(Exp,freq=FALSE)
+xfit<-seq(min(Exp),max(Exp),length=40) 
+yfit<-dnorm(xfit,mean=mean(Exp),sd=sd(Exp)) 
+yfit <- yfit*diff(h$mids[1:2])*length(Exp) 
+plot(h, main="Comparison to Normal Distribution")
+lines(xfit, yfit, col="blue", lwd=2)
+abline(v=1/lambda,col="blue")
+abline(v=mean,col="green")
+
+qqnorm(Exp)
+qqline(Exp)
+```
+
+#4. Evaluate the coverage of the confidence interval for 1/lambda
+```{r}
+left <- mean - qt(.95,40)*sd(Exp)/sqrt(n)
+right <- mean + qt(.95,40)*sd(Exp)/sqrt(n)
+left 
+right 
+
+```
